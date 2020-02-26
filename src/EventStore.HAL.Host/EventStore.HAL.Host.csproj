@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+		<PropertyGroup>
+				<OutputType>Exe</OutputType>
+				<TargetFramework>netcoreapp3.1</TargetFramework>
+				<RootNamespace>EventStore.HAL</RootNamespace>
+				<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+				<GenerateSupportedRuntime>false</GenerateSupportedRuntime>
+				<Platforms>x64</Platforms>
+		</PropertyGroup>
+		<ItemGroup>
+				<PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
+				<PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.2" />
+				<PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+				<PackageReference Include="Serilog" Version="2.9.0" />
+				<PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+		</ItemGroup>
+		<ItemGroup>
+				<ProjectReference Include="..\EventStore.HAL\EventStore.HAL.csproj" />
+		</ItemGroup>
+		<ItemGroup>
+		  <Folder Include="Browser" />
+		</ItemGroup>
+</Project>

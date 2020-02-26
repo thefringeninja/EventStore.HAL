@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+		<PropertyGroup>
+				<Platforms>x64</Platforms>
+				<LangVersion>8.0</LangVersion>
+				<Nullable>enable</Nullable>
+				<NullableContextOptions>enable</NullableContextOptions>
+				<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		</PropertyGroup>
+</Project>
