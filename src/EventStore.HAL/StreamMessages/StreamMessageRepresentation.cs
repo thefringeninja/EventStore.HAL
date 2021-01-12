@@ -17,7 +17,7 @@ namespace EventStore.HAL.StreamMessages {
 			yield return new Link(Constants.Relations.Message, self);
 			yield return new Link(Constants.Relations.Self, self);
 			yield return new Link(Constants.Relations.Self, LinkFormatter.Stream(resource.StreamId));
-			if (resource.StreamRevision > StreamRevision.Start) {
+			if (resource.StreamRevision > StreamRevision.FromStreamPosition(StreamPosition.Start)) {
 				yield return new Link(Constants.Relations.Previous,
 					LinkFormatter.StreamMessageByStreamVersion(resource.StreamId, resource.StreamRevision - 1));
 			}

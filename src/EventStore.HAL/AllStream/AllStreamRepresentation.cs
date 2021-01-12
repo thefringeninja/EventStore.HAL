@@ -53,7 +53,8 @@ namespace EventStore.HAL.AllStream {
 
 		private static IEnumerable<Link> GetStreamMessageLinks(ResolvedEvent e) {
 			var @event = e.OriginalEvent;
-			var self = LinkFormatter.StreamMessageByStreamVersion(@event.EventStreamId, @event.EventNumber);
+			var self = LinkFormatter.StreamMessageByStreamVersion(@event.EventStreamId,
+				StreamRevision.FromStreamPosition(@event.EventNumber));
 			yield return new Link(Constants.Relations.Message, self);
 			yield return new Link(Constants.Relations.Self, self);
 			yield return new Link(Constants.Relations.Feed, LinkFormatter.Stream(@event.EventStreamId));

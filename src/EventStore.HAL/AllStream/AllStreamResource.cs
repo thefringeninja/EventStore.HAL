@@ -6,11 +6,11 @@ namespace EventStore.HAL.AllStream {
 		public Position FromPositionInclusive { get; }
 		public bool EmbedPayload { get; }
 		public Direction ReadDirection { get; }
-		public ulong MaxCount { get; }
+		public long MaxCount { get; }
 		public IReadOnlyList<ResolvedEvent> Events { get; }
 		public string Self { get; }
 
-		public AllStreamResource(Direction readDirection, Position fromPositionExclusive, ulong maxCount,
+		public AllStreamResource(Direction readDirection, Position fromPositionExclusive, long maxCount,
 			bool embedPayload, IReadOnlyList<ResolvedEvent> events) {
 			EmbedPayload = embedPayload;
 			ReadDirection = readDirection;

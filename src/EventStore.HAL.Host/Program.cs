@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using EventStore.Client;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +20,10 @@ namespace EventStore.HAL {
 			var eventStoreClient = new EventStoreClient(new EventStoreClientSettings {
 				LoggerFactory = new SerilogLoggerFactory()
 			});
+			await Task.WhenAll(Enumerable.Range(0, 100)
+				.Select(i => eventStoreClient.AppendToStreamAsync($"stream-{i}", StreamState.Any, new[] {
+					new EventData(Uuid.NewUuid(), "-", Array.Empty<byte>(), contentType: "application/octet-stream"),
+				})));
 
 			await new HostBuilder()
 				.ConfigureHostConfiguration(builder => builder

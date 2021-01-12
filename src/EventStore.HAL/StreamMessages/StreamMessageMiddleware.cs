@@ -19,8 +19,8 @@ namespace EventStore.HAL.StreamMessages {
 				var streamRevision = context.Request.GetStreamRevision();
 
 				try {
-					var @event = await eventStore.ReadStreamAsync(Direction.Forwards, streamId, streamRevision!.Value,
-							1,
+					var @event = await eventStore.ReadStreamAsync(Direction.Forwards, streamId!,
+							StreamPosition.FromStreamRevision(streamRevision!.Value), 1,
 							resolveLinkTos: false, userCredentials: context.GetUserCredentials(),
 							cancellationToken: context.RequestAborted)
 						.Where(e => e.OriginalEvent.EventNumber == streamRevision)

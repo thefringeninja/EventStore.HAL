@@ -20,7 +20,7 @@ namespace EventStore.HAL.Streams {
 		private static IEnumerable<Link> GetStreamMessageLinks(ResolvedEvent resolvedEvent) {
 			var @event = resolvedEvent.OriginalEvent;
 			var self = LinkFormatter.StreamMessageByStreamVersion(@event.EventStreamId,
-				@event.EventNumber);
+				StreamRevision.FromStreamPosition(@event.EventNumber));
 			yield return new Link(Constants.Relations.Message, self);
 			yield return new Link(Constants.Relations.Self, self);
 			yield return new Link(Constants.Relations.Self, LinkFormatter.Stream(@event.EventStreamId));
@@ -47,19 +47,22 @@ namespace EventStore.HAL.Streams {
 			yield return new Link(Constants.Relations.Browse, LinkFormatter.BrowseStreamsTemplate());
 			yield return new Link(Constants.Relations.Self, resource.Self);
 
-			var first = LinkFormatter.ReadStream(resource.StreamId, StreamRevision.Start, resource.MaxCount,
+			var first = LinkFormatter.ReadStream(resource.StreamId,
+				StreamRevision.FromStreamPosition(StreamPosition.Start), resource.MaxCount,
 				resource.EmbedPayload, Direction.Forwards);
 
-			var last = LinkFormatter.ReadStream(resource.StreamId, StreamRevision.End, resource.MaxCount,
-				resource.EmbedPayload, Direction.Backwards);
+			var last = LinkFormatter.ReadStream(resource.StreamId,
+				StreamRevision.FromStreamPosition(StreamPosition.End), resource.MaxCount, resource.EmbedPayload,
+				Direction.Backwards);
 
 			yield return new Link(Constants.Relations.First, first);
 
 			if (resource.Events.Count > 0) {
 				var minStreamRevision = resource.Events.Min(x => x.OriginalEvent.EventNumber);
-				if (minStreamRevision != StreamRevision.Start) {
+				if (minStreamRevision != StreamRevision.FromStreamPosition(StreamPosition.Start)) {
 					yield return new Link(Constants.Relations.Previous,
-						LinkFormatter.ReadStream(resource.StreamId, minStreamRevision - 1, resource.MaxCount,
+						LinkFormatter.ReadStream(resource.StreamId,
+							StreamRevision.FromStreamPosition(minStreamRevision - 1), resource.MaxCount,
 							resource.EmbedPayload, Direction.Backwards));
 				}
 			}
@@ -69,7 +72,7 @@ namespace EventStore.HAL.Streams {
 			if (resource.Events.Count > 0) {
 				yield return new Link(Constants.Relations.Next,
 					LinkFormatter.ReadStream(resource.StreamId,
-						resource.Events.Max(x => x.OriginalEvent.EventNumber) + 1,
+						StreamRevision.FromStreamPosition(resource.Events.Max(x => x.OriginalEvent.EventNumber).Next()),
 						resource.MaxCount, resource.EmbedPayload, Direction.Forwards));
 			}
 

@@ -20,9 +20,9 @@ namespace EventStore.HAL {
 			};
 		}
 
-		public static ulong GetMaxCount(this HttpRequest request) =>
+		public static long GetMaxCount(this HttpRequest request) =>
 			request.Query.TryGetValueCaseInsensitive('m', out var value)
-				? ulong.TryParse(value, out var count)
+				? long.TryParse(value, out var count)
 					? count <= 0
 						? Constants.MaxCount
 						: count
@@ -33,25 +33,23 @@ namespace EventStore.HAL {
 			request.Query.TryGetValueCaseInsensitive('p', out var value)
 				? value.TryParseStreamRevision(out var streamRevision)
 					? readDirection == Direction.Forwards
-						? streamRevision < StreamRevision.Start
-							? StreamRevision.Start
+						? streamRevision < StreamRevision.FromStreamPosition(StreamPosition.Start)
+							? StreamRevision.FromStreamPosition(StreamPosition.Start)
 							: streamRevision
-						: streamRevision < StreamRevision.End
-							? StreamRevision.End
+						: streamRevision < StreamRevision.FromStreamPosition(StreamPosition.End)
+							? StreamRevision.FromStreamPosition(StreamPosition.End)
 							: streamRevision
 					: readDirection == Direction.Forwards
-						? StreamRevision.Start
-						: StreamRevision.End
+						? StreamRevision.FromStreamPosition(StreamPosition.Start)
+						: StreamRevision.FromStreamPosition(StreamPosition.End)
 				: readDirection == Direction.Forwards
-					? StreamRevision.Start
-					: StreamRevision.End;
+					? StreamRevision.FromStreamPosition(StreamPosition.Start)
+					: StreamRevision.FromStreamPosition(StreamPosition.End);
 
 		public static Position GetPosition(this HttpRequest request, Direction readDirection) =>
 			request.Query.TryGetValueCaseInsensitive('p', out var value)
 				? value.TryParsePosition(out var position)
-					? position < Position.End
-						? Position.End
-						: position
+					? position
 					: readDirection == Direction.Forwards
 						? Position.Start
 						: Position.End

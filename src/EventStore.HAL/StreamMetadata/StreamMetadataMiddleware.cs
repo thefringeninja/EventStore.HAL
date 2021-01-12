@@ -48,12 +48,12 @@ namespace EventStore.HAL.StreamMetadata {
 
 				var metadata = new Client.StreamMetadata(
 					dto.MaxCount, dto.MaxAge, dto.TruncateBefore.HasValue
-						? new StreamRevision(dto.TruncateBefore.Value)
-						: new StreamRevision?(), dto.CacheControl,
+						? new StreamPosition(dto.TruncateBefore.Value)
+						: new StreamPosition?(), dto.CacheControl,
 					new StreamAcl(dto.Acl?.ReadRoles, dto.Acl?.WriteRoles, dto.Acl?.DeleteRoles, dto.Acl?.MetaReadRoles,
 						dto.Acl?.MetaWriteRoles), dto.CustomMetadata);
 
-				var result = await eventStore.SetStreamMetadataAsync(streamId, AnyStreamRevision.Any,
+				var result = await eventStore.SetStreamMetadataAsync(streamId!, StreamState.Any,
 					metadata,
 					userCredentials: context.GetUserCredentials(),
 					cancellationToken: context.RequestAborted);

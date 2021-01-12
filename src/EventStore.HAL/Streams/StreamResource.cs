@@ -8,12 +8,12 @@ namespace EventStore.HAL.Streams {
 		public string StreamId { get; }
 		public bool EmbedPayload { get; }
 		public Direction ReadDirection { get; }
-		public ulong MaxCount { get; }
+		public long MaxCount { get; }
 		public IReadOnlyList<ResolvedEvent> Events { get; }
 		public string Self { get; }
 
 		public StreamResource(string streamId, Direction readDirection, StreamRevision fromStreamRevisionInclusive,
-			ulong maxCount, bool embedPayload, IReadOnlyList<ResolvedEvent>? events = null) {
+			long maxCount, bool embedPayload, IReadOnlyList<ResolvedEvent>? events = null) {
 			StreamId = streamId;
 			EmbedPayload = embedPayload;
 			ReadDirection = readDirection;
@@ -26,14 +26,14 @@ namespace EventStore.HAL.Streams {
 
 		public sealed class NotFound : StreamResource {
 			public NotFound(string streamId, Direction readDirection, StreamRevision fromStreamRevisionInclusive,
-				ulong maxCount, bool embedPayload) : base(streamId, readDirection, fromStreamRevisionInclusive,
+				long maxCount, bool embedPayload) : base(streamId, readDirection, fromStreamRevisionInclusive,
 				maxCount, embedPayload, Array.Empty<ResolvedEvent>()) {
 			}
 		}
 
 		public sealed class Tombstoned : StreamResource {
 			public Tombstoned(string streamId, Direction readDirection, StreamRevision fromStreamRevisionInclusive,
-				ulong maxCount, bool embedPayload) : base(streamId, readDirection, fromStreamRevisionInclusive,
+				long maxCount, bool embedPayload) : base(streamId, readDirection, fromStreamRevisionInclusive,
 				maxCount, embedPayload, Array.Empty<ResolvedEvent>()) {
 			}
 		}

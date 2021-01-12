@@ -28,23 +28,23 @@ namespace EventStore.HAL {
 
 		public static string Stream(string streamId) => $"{Constants.Paths.Streams}/{EncodeStreamId(streamId)}";
 
-		public static string ReadAll(Position position, ulong maxCount, bool embed, Direction direction) =>
+		public static string ReadAll(Position position, long maxCount, bool embed, Direction direction) =>
 			$"{Constants.Paths.AllStream}?{GetStreamQueryString(position, maxCount, embed, direction)}";
 
-		public static string ReadStream(string streamId, StreamRevision fromVersionInclusive, ulong maxCount,
+		public static string ReadStream(string streamId, StreamRevision fromVersionInclusive, long maxCount,
 			bool embed, Direction direction) =>
 			$"{Stream(streamId)}?{GetStreamQueryString(fromVersionInclusive, maxCount, embed, direction)}";
 
-		private static string GetStreamQueryString(Position position, ulong maxCount, bool embed,
+		private static string GetStreamQueryString(Position position, long maxCount, bool embed,
 			Direction direction) =>
 			GetStreamQueryString($"{position.CommitPosition}/{position.PreparePosition}", maxCount, embed,
 				direction);
 
-		private static string GetStreamQueryString(StreamRevision streamRevision, ulong maxCount, bool embed,
+		private static string GetStreamQueryString(StreamRevision streamRevision, long maxCount, bool embed,
 			Direction direction) =>
 			GetStreamQueryString(streamRevision.ToString(), maxCount, embed, direction);
 
-		private static string GetStreamQueryString(string streamRevisionOrPosition, ulong maxCount, bool embed,
+		private static string GetStreamQueryString(string streamRevisionOrPosition, long maxCount, bool embed,
 			Direction direction) {
 			var builder = new StringBuilder()
 				.Append("d=").Append(direction == Direction.Forwards ? "f" : "b")

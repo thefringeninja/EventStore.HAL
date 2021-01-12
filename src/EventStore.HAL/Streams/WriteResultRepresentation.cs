@@ -4,19 +4,19 @@ using EventStore.Client;
 using Hallo;
 
 namespace EventStore.HAL.Streams {
-	internal class WriteResultRepresentation : Hal<(string, WriteResult)>, IHalLinks<(string streamId, WriteResult)>,
-		IHalState<(string, WriteResult writeResult)> {
+	internal class WriteResultRepresentation : Hal<(string, IWriteResult)>, IHalLinks<(string streamId, IWriteResult)>,
+		IHalState<(string, IWriteResult writeResult)> {
 		public static readonly WriteResultRepresentation Instance = new WriteResultRepresentation();
 
 		private WriteResultRepresentation() {
 		}
 
-		public IEnumerable<Link> LinksFor((string streamId, WriteResult) resource) =>
+		public IEnumerable<Link> LinksFor((string streamId, IWriteResult) resource) =>
 			LinksForInternal(resource.streamId)
 				.Select(Rebase);
 
-		public object StateFor((string, WriteResult writeResult) resource) =>
-			new {resource.writeResult.LogPosition, resource.writeResult.NextExpectedVersion};
+		public object StateFor((string, IWriteResult writeResult) resource) =>
+			new {resource.writeResult.LogPosition, resource.writeResult.NextExpectedStreamRevision};
 
 		private static IEnumerable<Link> LinksForInternal(string streamId) {
 			var self = LinkFormatter.Stream(streamId);

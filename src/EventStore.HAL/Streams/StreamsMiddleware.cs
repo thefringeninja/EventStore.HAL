@@ -28,7 +28,8 @@ namespace EventStore.HAL.Streams {
 
 				try {
 					var events = await eventStore
-						.ReadStreamAsync(readDirection, streamId, fromPositionInclusive, maxCount,
+						.ReadStreamAsync(readDirection, streamId,
+							StreamPosition.FromStreamRevision(fromPositionInclusive), maxCount,
 							resolveLinkTos: false,
 							userCredentials: context.GetUserCredentials(),
 							cancellationToken: context.RequestAborted)
@@ -54,7 +55,7 @@ namespace EventStore.HAL.Streams {
 				var streamId = context.Request.GetStreamId();
 
 				var eventData = await GetEvents(context).ToArrayAsync(context.RequestAborted);
-				var writeResult = await eventStore.AppendToStreamAsync(streamId, AnyStreamRevision.Any, eventData,
+				var writeResult = await eventStore.AppendToStreamAsync(streamId!, StreamState.Any, eventData,
 					userCredentials: context.GetUserCredentials(),
 					cancellationToken: context.RequestAborted);
 
@@ -64,7 +65,7 @@ namespace EventStore.HAL.Streams {
 			async ValueTask<Response> DeleteStream(HttpContext context) {
 				var streamId = context.Request.GetStreamId();
 
-				await eventStore.SoftDeleteAsync(streamId, AnyStreamRevision.Any,
+				await eventStore.SoftDeleteAsync(streamId!, StreamState.Any,
 					userCredentials: context.GetUserCredentials(),
 					cancellationToken: context.RequestAborted);
 

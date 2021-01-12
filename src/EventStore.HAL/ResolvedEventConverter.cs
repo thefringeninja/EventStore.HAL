@@ -33,21 +33,22 @@ namespace EventStore.HAL {
 			writer.WriteString("streamId", @event.EventStreamId);
 
 			writer.WritePropertyName("streamVersion");
-			options.GetConverter<StreamRevision>().Write(writer, @event.EventNumber, options);
+			options.GetConverter<StreamRevision>()
+				.Write(writer, StreamRevision.FromStreamPosition(@event.EventNumber), options);
 
 			writer.WriteString("type", @event.EventType);
 
 			writer.WritePropertyName("payload");
 			if (MediaTypeHeaderValue.TryParse(@event.ContentType, out var contentType)
 			    && contentType.SubType.EndsWith("json", StringComparison.Ordinal)) {
-				var reader = new Utf8JsonReader(@event.Data.AsSpan());
+				var reader = new Utf8JsonReader(@event.Data.Span);
 				if (JsonDocument.TryParseValue(ref reader, out var payload)) {
 					payload.WriteTo(writer);
 				} else {
-					writer.WriteBase64StringValue(@event.Data);
+					writer.WriteBase64StringValue(@event.Data.Span);
 				}
 			} else {
-				writer.WriteBase64StringValue(@event.Data);
+				writer.WriteBase64StringValue(@event.Data.Span);
 			}
 
 			writer.WriteEndObject();

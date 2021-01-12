@@ -4,9 +4,9 @@ using EventStore.Client;
 using Hallo;
 
 namespace EventStore.HAL.StreamMetadata {
-	internal class StreamMetadataResultRepresentation : Hal<(string, WriteResult)>,
-		IHalLinks<(string streamId, WriteResult)>,
-		IHalState<(string, WriteResult writeResult)> {
+	internal class StreamMetadataResultRepresentation : Hal<(string, IWriteResult)>,
+		IHalLinks<(string streamId, IWriteResult)>,
+		IHalState<(string, IWriteResult writeResult)> {
 		public static readonly StreamMetadataResultRepresentation Instance = new StreamMetadataResultRepresentation();
 
 		private StreamMetadataResultRepresentation() {
@@ -14,7 +14,7 @@ namespace EventStore.HAL.StreamMetadata {
 
 		private static Link Rebase(Link link) => link.Rebase("../..");
 
-		private static IEnumerable<Link> LinksForInternal((string streamId, WriteResult) resource) {
+		private static IEnumerable<Link> LinksForInternal((string streamId, IWriteResult) resource) {
 			yield return new Link(Constants.Relations.Index, "./");
 			yield return new Link(Constants.Relations.Find, LinkFormatter.FindStreamTemplate());
 			yield return new Link(Constants.Relations.Browse, LinkFormatter.BrowseStreamsTemplate());
@@ -25,10 +25,10 @@ namespace EventStore.HAL.StreamMetadata {
 			yield return new Link(Constants.Relations.Feed, LinkFormatter.Stream(resource.streamId));
 		}
 
-		public IEnumerable<Link> LinksFor((string streamId, WriteResult) resource) =>
+		public IEnumerable<Link> LinksFor((string streamId, IWriteResult) resource) =>
 			LinksForInternal(resource).Select(Rebase);
 
-		public object StateFor((string, WriteResult writeResult) resource) =>
-			new {resource.writeResult.LogPosition, resource.writeResult.NextExpectedVersion};
+		public object StateFor((string, IWriteResult writeResult) resource) =>
+			new {resource.writeResult.LogPosition, resource.writeResult.NextExpectedStreamRevision};
 	}
 }
